@@ -1,25 +1,32 @@
-<div class="history-container">
-  <mat-card>
-    <mat-card-content>
-      <h2>History</h2>
-      <div class="history-grid">
-        <div class="day">M</div>
-        <div class="day">D</div>
-        <div class="day">M</div>
-        <div class="day">D</div>
-        <div class="day">F</div>
-        <div class="day">S</div>
-        <div class="day">S</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weekly Calendar with Chart</title>
+  <link rel="stylesheet" href="./history.component.css">
+</head>
+<body>
+
+  <div class="calendar">
+    <div class="calendar-navigation">
+      <button (click)="previousWeek()">Vorherige Woche</button>
+      <button (click)="nextWeek()">Nächste Woche</button>
+    </div>
+    <div class="chart-container">
+      <div class="weekdays">
+        <div class="weekday" *ngFor="let day of weekDates">
+          <div>{{ day | date: 'EEEE' }}</div>
+        </div>
       </div>
-      <div class="details-grid">
-        <div class="details">Cals</div>
-        <div class="details">Meals</div>
-        <div class="details">Etc</div>
+      <div class="chart">
+        <canvas id="myChart"></canvas>
       </div>
-      <div class="stats">
-        <button mat-raised-button color="primary">Average cals</button>
-        <button mat-raised-button color="accent">Progress fürs Ziel</button>
-      </div>
-    </mat-card-content>
-  </mat-card>
-</div>
+      <div class="current-date">{{ currentDate | date: 'dd.MM.yyyy' }}</div>
+    </div>
+  </div>
+  
+  
+
+</body>
+</html>
