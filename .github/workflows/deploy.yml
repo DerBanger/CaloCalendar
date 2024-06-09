@@ -1,0 +1,46 @@
+name: Deploy Frontend to GitHub Pages
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./frontend
+
+      - name: Build Angular application
+        run: npm run build -- --configuration production --output-path docs --base-href /CaloCalendar/
+        working-directory: ./frontend
+
+      - name: List build directory
+        run: ls -R ./frontend/docs
+
+      - name: Upload artifact
+        id: upload
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./frontend/docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

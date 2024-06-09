@@ -20,6 +20,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { FridgeComponent } from './fridge/fridge.component';
 import { MealsComponent } from './meals/meals.component';
 import { RecipesComponent } from './recipes/recipes.component';
+import {MatGridList, MatGridTile} from "@angular/material/grid-list";
+
 
 
 @NgModule({
@@ -30,7 +32,8 @@ import { RecipesComponent } from './recipes/recipes.component';
     ProfileComponent,
     FridgeComponent,
     MealsComponent,
-    RecipesComponent
+    RecipesComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -46,7 +49,9 @@ import { RecipesComponent } from './recipes/recipes.component';
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatListModule
+    MatListModule,
+    MatGridTile,
+    MatGridList
   ],
   providers: [],
   bootstrap: [AppComponent]

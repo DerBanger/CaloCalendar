@@ -21,7 +21,7 @@ public class UserProfileMapperTest {
         model.setId(1L);
         model.setUserName("TestUser");
         model.setAge(25);
-        model.setWeight(75.0);
+        model.setWeight(75000);
         model.setGender(1);
         model.setLevelOfPhysicalActivity(2);
 
@@ -29,7 +29,7 @@ public class UserProfileMapperTest {
         entity.setId(1L);
         entity.setUserName("TestUser");
         entity.setAge(25);
-        entity.setWeight(75.0);
+        entity.setWeight(75000);
         entity.setGender(1);
         entity.setLevelOfPhysicalActivity(2);
     }

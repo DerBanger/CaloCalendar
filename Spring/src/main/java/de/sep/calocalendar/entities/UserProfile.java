@@ -20,7 +20,7 @@ public class UserProfile {
     private String userName;
     private int gender;
     private int age;
-    private double weight;
+    private int weight;
     private int levelOfPhysicalActivity;
 
 }

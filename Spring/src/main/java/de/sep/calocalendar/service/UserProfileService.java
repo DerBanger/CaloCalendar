@@ -1,6 +1,5 @@
 package de.sep.calocalendar.service;
 
-import de.sep.calocalendar.entities.UserProfile;
 import de.sep.calocalendar.mapper.UserProfileMapper;
 import de.sep.calocalendar.mapper.UserProfileMapperImpl;
 import de.sep.calocalendar.model.UserProfileModel;
@@ -15,58 +14,55 @@ import java.util.Optional;
 public class UserProfileService {
 
     @Autowired
-    private UserProfileRepository userProfileRepository;
+    private UserProfileRepository repo;
 
     @Autowired
     private final UserProfileMapper mapper = new UserProfileMapperImpl();
 
+    public Optional<Long> addUserProfile(UserProfileModel model) {
+        if (model.getId() != null) throw new IllegalArgumentException("Don't give an id!");
+
+        var entity = mapper.toEntity(model);
+        entity = repo.save(entity);
+
+        return Optional.of(entity.getId());
+    }
+
     public Optional<List<UserProfileModel>> getAllUserProfiles() {
-        List<UserProfile> userProfiles = userProfileRepository.findAll();
-        List<UserProfileModel> userProfileModels = userProfiles.stream()
+        var entities = repo.findAll();
+        if (entities.isEmpty()) throw new IllegalArgumentException("There is no UserProfile in Database");
+
+        var models = entities.stream()
                 .map(mapper::toModel)
                 .toList();
-        return Optional.of(userProfileModels);
+
+        return Optional.of(models);
+    }
+
+    public Optional<UserProfileModel> updateUserProfile(UserProfileModel model) {
+        var entity = mapper.toEntity(model);
+        UserProfileModel savedUserProfileModel;
+
+        if (repo.existsById(model.getId())) {
+            savedUserProfileModel = mapper.toModel(repo.save(entity));
+        } else {
+            throw new IllegalArgumentException("UserProfile with id: " + model.getId() + " does not exist");
+        }
+
+        return Optional.of(savedUserProfileModel);
     }
 
     public Optional<UserProfileModel> getUserProfileById(Long id) {
-        UserProfile userProfile = userProfileRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Could not find UserProfile with id " + id));
-        UserProfileModel userProfileModel = mapper.toModel(userProfile);
-        return Optional.of(userProfileModel);
-    }
-
-    public Optional<Long> createUserProfile(UserProfileModel userProfileModel) {
-        if (userProfileModel.getId() != null) {
-            throw new IllegalArgumentException("ID must be null for new UserProfile");
-        }
-        UserProfile userProfile = mapper.toEntity(userProfileModel);
-        userProfile = userProfileRepository.save(userProfile);
-        return Optional.of(userProfile.getId());
-    }
-
-    public Optional<UserProfileModel> updateUserProfile(Long id, UserProfileModel userProfileModel) {
-        UserProfile existingUserProfile = userProfileRepository.findById(id)
+        var entity = repo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Could not find UserProfile with id " + id));
 
-        updateEntityFromModel(userProfileModel, existingUserProfile);
-        UserProfile updatedUserProfile = userProfileRepository.save(existingUserProfile);
-        UserProfileModel updatedModel = mapper.toModel(updatedUserProfile);
-        return Optional.of(updatedModel);
+        return Optional.of(mapper.toModel(entity));
     }
 
     public void deleteUserProfile(Long id) {
-        if (userProfileRepository.existsById(id)) {
-            userProfileRepository.deleteById(id);
-        } else {
+        if (!repo.existsById(id)) {
             throw new IllegalArgumentException("Could not find UserProfile by id: " + id);
         }
-    }
-
-    private void updateEntityFromModel(UserProfileModel model, UserProfile entity) {
-        entity.setUserName(model.getUserName());
-        entity.setGender(model.getGender());
-        entity.setAge(model.getAge());
-        entity.setWeight(model.getWeight());
-        entity.setLevelOfPhysicalActivity(model.getLevelOfPhysicalActivity());
+        repo.deleteById(id);
     }
 }

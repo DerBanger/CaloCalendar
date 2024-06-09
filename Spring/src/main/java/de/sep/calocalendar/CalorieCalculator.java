@@ -4,77 +4,71 @@ import javax.swing.*;
 
 public class CalorieCalculator {
 
-        /*
-        gender  0=female
-                1=male
+    private static final int MALE = 0;
+    private static final int FEMALE = 1;
 
-        bodyweight in kg
+    private static final int LOW_ACTIVITY = 0;
+    private static final int MEDIUM_ACTIVITY = 1;
+    private static final int HIGH_ACTIVITY = 2;
 
-        height in cm
+    private static final int LOSE_WEIGHT = 0;
+    private static final int HOLD_WEIGHT = 1;
+    private static final int GAIN_WEIGHT = 2;
 
-        age in years
+    /**
+     * Calculate the daily calorie needs based on various factors.
+     *
+     * @param gender            Gender of the individual (0 = male, 1 = female).
+     * @param bodyweight        Body weight in kilograms.
+     * @param height            Height in centimeters.
+     * @param age               Age in years.
+     * @param physicalActivity  Level of physical activity (0 = low, 1 = medium, 2 = high).
+     * @param selectedGoal      Goal (0 = lose weight, 1 = hold weight, 2 = gain weight).
+     * @return                  The calculated daily calorie needs.
+     */
+    public int calculateCalorieNeeds(int gender, double bodyweight, double height, double age, int physicalActivity, int selectedGoal) {
 
-        levelOfPhysicalActivity     0=low physical activity
-                                    1=medium physical activity
-                                    2=high physical activity
+        double neededCalories = calculateBasalMetabolicRate(gender, bodyweight, height, age);
+        neededCalories = adjustForPhysicalActivity(neededCalories, physicalActivity);
+        neededCalories = adjustForGoal(neededCalories, selectedGoal);
 
-        goal                        0=lose weight
-                                    1=hold weight
-                                    2=gain weight
-         */
-
-int calculateCalorieNeeds(int gender,double bodyweight,double height, double age, int physicalActivity, int selectedGoal) {
-
-    double neededCalories = 0;
-
-    switch (gender) {
-        case 0:
-            neededCalories = (10*bodyweight) + (6.25*height) - (5*age) + 5;
-            break;
-        case 1:
-            neededCalories = (10*bodyweight) + (6.25*height) - (5*age) - 161;
-            break;
-        default:
-            // Handle unexpected cases , f.e. missing inputs
-            // ToDo: show error message
-            break;
+        return (int) Math.round(neededCalories);
     }
 
-    switch(physicalActivity){
-        case 0:
-            neededCalories = neededCalories*1.25;
-            break;
-        case 1:
-            neededCalories = neededCalories*1.4;
-            break;
-        case 2:
-            neededCalories = neededCalories*1.55;
-            break;
-        default:
-            // Handle unexpected cases , f.e. missing inputs
-            // ToDo: show error message
-            break;
+    private double calculateBasalMetabolicRate(int gender, double bodyweight, double height, double age) {
+        switch (gender) {
+            case MALE:
+                return (10 * bodyweight) + (6.25 * height) - (5 * age) + 5;
+            case FEMALE:
+                return (10 * bodyweight) + (6.25 * height) - (5 * age) - 161;
+            default:
+                throw new IllegalArgumentException("Invalid gender: " + gender);
+        }
     }
 
-    switch(selectedGoal){
-        case 0:
-            neededCalories = neededCalories-500;
-            break;
-        case 1:
-            //leave calorie needs as they are to hold weight
-            break;
-        case 2:
-            neededCalories = neededCalories+500;
-            break;
-        default:
-            // Handle unexpected cases , f.e. missing inputs
-            // ToDo: show error message
-            break;
+    private double adjustForPhysicalActivity(double calories, int physicalActivity) {
+        switch (physicalActivity) {
+            case LOW_ACTIVITY:
+                return calories * 1.25;
+            case MEDIUM_ACTIVITY:
+                return calories * 1.4;
+            case HIGH_ACTIVITY:
+                return calories * 1.55;
+            default:
+                throw new IllegalArgumentException("Invalid level of physical activity: " + physicalActivity);
+        }
     }
 
-    int neededCaloriesRounded = (int) Math.round(neededCalories);
-    return neededCaloriesRounded;
-
+    private double adjustForGoal(double calories, int selectedGoal) {
+        switch (selectedGoal) {
+            case LOSE_WEIGHT:
+                return calories - 500;
+            case HOLD_WEIGHT:
+                return calories; // No change
+            case GAIN_WEIGHT:
+                return calories + 500;
+            default:
+                throw new IllegalArgumentException("Invalid goal: " + selectedGoal);
+        }
+    }
 }
-}
-

@@ -1,44 +1,44 @@
 package de.sep.calocalendar.controller;
 
+import de.sep.calocalendar.api.UserProfileApiDelegate;
 import de.sep.calocalendar.model.UserProfileModel;
 import de.sep.calocalendar.service.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/userprofiles")
-public class UserProfileController {
+@Controller
+public class UserProfileController implements UserProfileApiDelegate {
 
-   @Autowired
-    private UserProfileService userProfileService;
+    @Autowired
+    private UserProfileService service;
 
-    @GetMapping
+    @Override
+    public ResponseEntity<Long> addUserProfile(UserProfileModel model) {
+        return ResponseEntity.of(service.addUserProfile(model));
+    }
+
+    @Override
     public ResponseEntity<List<UserProfileModel>> getAllUserProfiles() {
-        return ResponseEntity.of(userProfileService.getAllUserProfiles());
+        return ResponseEntity.of(service.getAllUserProfiles());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserProfileModel> getUserProfileById(@PathVariable Long id) {
-        return ResponseEntity.of(userProfileService.getUserProfileById(id));
+    @Override
+    public ResponseEntity<UserProfileModel> updateUserProfile(UserProfileModel model) {
+        return ResponseEntity.of(service.updateUserProfile(model));
     }
 
-    @PostMapping
-    public ResponseEntity<Long> createUserProfile(@RequestBody UserProfileModel userProfileModel) {
-        return ResponseEntity.of(userProfileService.createUserProfile(userProfileModel));
+    @Override
+    public ResponseEntity<UserProfileModel> getUserProfileById(Long id) {
+        return ResponseEntity.of(service.getUserProfileById(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserProfileModel> updateUserProfile(@PathVariable Long id, @RequestBody UserProfileModel userProfileModel) {
-        return ResponseEntity.of(userProfileService.updateUserProfile(id, userProfileModel));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserProfile(@PathVariable Long id) {
-        userProfileService.deleteUserProfile(id);
+    @Override
+    public ResponseEntity<Void> deleteUser(Long id) {
+        service.deleteUserProfile(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
